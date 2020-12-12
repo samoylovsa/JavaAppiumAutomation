@@ -79,7 +79,16 @@ public class FirstTest {
         }
     }
 
-
+    protected void swipeElementToLeft(By by, String error_message) {
+        WebElement element = waitForElementPresent(by, error_message, 10);
+        int left_x = element.getLocation().getX();
+        int right_x = left_x + element.getSize().getWidth();
+        int upper_y = element.getLocation().getY();
+        int lower_y = upper_y + element.getSize().getHeight();
+        int middle_y = (upper_y+lower_y) / 2;
+        TouchAction action = new TouchAction(driver);
+        action.press(right_x, middle_y).waitAction(150).moveTo(left_x, middle_y).release().perform();
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -91,7 +100,7 @@ public class FirstTest {
         capabilities.setCapability("automationName","Appium");
         capabilities.setCapability("appPackage","org.wikipedia");
         capabilities.setCapability("appActivity",".main.MainActivity");
-        capabilities.setCapability("app","C:/JavaAppiumAutomation/apks/org.wikipedia_50334_apps.evozi.com.apk");
+        capabilities.setCapability("app","C:/JavaAppiumAutomation/apks/org.wikipedia.apk");
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
     }
@@ -104,11 +113,6 @@ public class FirstTest {
     @Test
     public void firstTests() {
 
-        waitForElementAndClick(
-                By.xpath("//*[contains(@text, 'SKIP')]"),
-                "Cannot find 'SKIP'",
-                2
-        );
 
         waitForElementAndClick(
                 By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
@@ -132,11 +136,6 @@ public class FirstTest {
 
     @Test
     public void testCancelSearch() {
-        waitForElementAndClick(
-                By.xpath("//*[contains(@text, 'SKIP')]"),
-                "Cannot find 'SKIP'",
-                2
-        );
 
         waitForElementAndClick(
                 By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
@@ -176,11 +175,6 @@ public class FirstTest {
     @Test
     public void testSwipeArticle() {
         waitForElementAndClick(
-                By.xpath("//*[contains(@text, 'SKIP')]"),
-                "Cannot find 'SKIP'",
-                2
-        );
-        waitForElementAndClick(
                 By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
                 "Cannot find 'Search Wikipedia'",
                 5
@@ -203,14 +197,88 @@ public class FirstTest {
 
     @Test
     public void testSwipeArticleToFindElement() {
-        waitForElementAndClick(
-                By.xpath("//*[contains(@text, 'SKIP')]"),
-                "Cannot find 'SKIP'",
-                5
-        );
+
         swipeUpToFindElement(
                 By.xpath("//*[contains(@text, 'MORE LIKE THIS')]"),
                 "Cannot find 'MORE LIKE THISsss'",
+                5
+        );
+    }
+
+    @Test
+    public void testSaveArticleToMyList() {
+
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
+                "Cannot find 'Search Wikipedia'",
+                5
+        );
+
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text, 'Search…')]"),
+                "Java",
+                "Cannot find 'Search…'",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//*[@text='Object-oriented programming language']"),
+                "Cannot find 'Object-oriented programming language' topic searching by 'Java'",
+                5
+        );
+        waitForElementAndClick(
+                By.xpath("//android.widget.ImageView[@content-desc='More options']"),
+                "Cannot find 'More options' button",
+                5
+        );
+        waitForElementAndClick(
+                By.xpath("//*[@text='Add to reading list']"),
+                "Cannot find 'Add to reading list' button",
+                5
+        );
+        waitForElementAndClick(
+                By.xpath("//*[@text='GOT IT']"),
+                "Cannot find 'GOT IT' button",
+                5
+        );
+        waitForElementAndClear(
+                By.xpath("//*[@text='My reading list']"),
+                "Cannot clear text 'My reading list'",
+                5
+        );
+        waitForElementAndSendKeys(
+                By.xpath("//*[@resource-id='org.wikipedia:id/text_input']"),
+                "Learning programming",
+                "Cannot put text into article folder",
+                5
+        );
+        waitForElementAndClick(
+                By.xpath("//*[@text='OK']"),
+                "Cannot find 'OK' button",
+                5
+        );
+        waitForElementAndClick(
+                By.xpath("//*[@content-desc='Navigate up']"),
+                "Cannot find X button",
+                5
+        );
+        waitForElementAndClick(
+                By.xpath("//*[@content-desc='My lists']"),
+                "Cannot find 'My lists' button",
+                5
+        );
+        waitForElementAndClick(
+                By.xpath("//*[@text='Learning programming']"),
+                "Cannot find 'My lists' button",
+                5
+        );
+/*        swipeElementToLeft(
+                By.xpath("//*[@text='Java (programming language)']"),
+                "Cannot swipe element to the left"
+        );*/
+        waitForElementNotPresent(
+                By.xpath("//*[@text='object-oriented programming language']"),
+                "Cannot delete saved article",
                 5
         );
     }
