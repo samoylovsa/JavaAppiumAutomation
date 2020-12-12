@@ -1,9 +1,11 @@
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -52,6 +54,15 @@ public class FirstTest {
         return element;
     }
 
+    protected void swipeUp(int timeOfSwipe) {
+        TouchAction action = new TouchAction(driver);
+        Dimension size = driver.manage().window().getSize();
+        int x = size.width / 2;
+        int start_y = (int) (size.height * 0.8);
+        int end_y = (int) (size.height * 0.2);
+        action.press(x, start_y).waitAction(timeOfSwipe).moveTo(x, end_y).release().perform();
+    }
+
 
 
     @Before
@@ -80,23 +91,27 @@ public class FirstTest {
         waitForElementAndClick(
                 By.xpath("//*[contains(@text, 'SKIP')]"),
                 "Cannot find 'SKIP'",
-                2);
+                2
+        );
 
         waitForElementAndClick(
                 By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
                 "Cannot find 'Search Wikipedia'",
-                5);
+                5
+        );
 
         waitForElementAndSendKeys(
                 By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
                 "Java",
                 "Cannot find 'Search Wikipedia'",
-                5);
+                5
+        );
 
         waitForElementPresent(
                 By.xpath("//*[@text='Object-oriented programming language']"),
                 "Cannot find 'Object-oriented programming language' topic searching by 'Java'",
-                5);
+                5
+        );
     }
 
     @Test
@@ -104,18 +119,21 @@ public class FirstTest {
         waitForElementAndClick(
                 By.xpath("//*[contains(@text, 'SKIP')]"),
                 "Cannot find 'SKIP'",
-                2);
+                2
+        );
 
         waitForElementAndClick(
                 By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
                 "Cannot find 'Search Wikipedia'",
-                5);
+                5
+        );
 
         waitForElementAndSendKeys(
                 By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
                 "Java",
                 "Cannot find 'Search Wikipedia'",
-                5);
+                5
+        );
 
         waitForElementAndClear(
                 By.xpath("//*[contains(@text, 'Java')]"),
@@ -129,11 +147,41 @@ public class FirstTest {
                         "/android.widget.LinearLayout/android.widget.FrameLayout[1]/android.view.ViewGroup" +
                         "/android.widget.ImageButton"),
                 "Cannot find Back button",
-                10);
+                10
+        );
 
         waitForElementNotPresent(
                 By.xpath("//*[contains(@text, 'GOT IT')]"),
                 "Cannot find 'GOT IT'",
-                10);
+                10
+        );
+    }
+
+    @Test
+    public void testSwipeArticle() {
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text, 'SKIP')]"),
+                "Cannot find 'SKIP'",
+                2
+        );
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
+                "Cannot find 'Search Wikipedia'",
+                5
+        );
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
+                "Java",
+                "Cannot find 'Search Wikipedia'",
+                5
+        );
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text, 'Java (programming language)')]"),
+                "Cannot find 'Java (programming language)'",
+                10
+        );
+        swipeUp(2000);
+        swipeUp(2000);
+        swipeUp(2000);
     }
 }
