@@ -63,6 +63,22 @@ public class FirstTest {
         action.press(x, start_y).waitAction(timeOfSwipe).moveTo(x, end_y).release().perform();
     }
 
+    protected void swipeUpQuick() {
+        swipeUp(200);
+    }
+
+    protected void swipeUpToFindElement(By by, String error_message, int max_swipes) {
+        int already_swipes = 0;
+        while (driver.findElements(by).size() == 0) {
+            if (already_swipes > max_swipes) {
+                waitForElementPresent(by, "Cannot find element by swiping up. \n" + error_message, 0);
+                return;
+            }
+            swipeUpQuick();
+            ++already_swipes;
+        }
+    }
+
 
 
     @Before
@@ -183,5 +199,19 @@ public class FirstTest {
         swipeUp(2000);
         swipeUp(2000);
         swipeUp(2000);
+    }
+
+    @Test
+    public void testSwipeArticleToFindElement() {
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text, 'SKIP')]"),
+                "Cannot find 'SKIP'",
+                5
+        );
+        swipeUpToFindElement(
+                By.xpath("//*[contains(@text, 'MORE LIKE THIS')]"),
+                "Cannot find 'MORE LIKE THISsss'",
+                5
+        );
     }
 }
