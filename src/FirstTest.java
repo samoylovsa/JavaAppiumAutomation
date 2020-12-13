@@ -1,17 +1,22 @@
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileElement;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.AndroidElement;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URL;
+import java.util.List;
 
 public class FirstTest {
 
@@ -90,6 +95,18 @@ public class FirstTest {
         action.press(right_x, middle_y).waitAction(150).moveTo(left_x, middle_y).release().perform();
     }
 
+    private int getAmountOfElements(By by) {
+        List elements = driver.findElements(by);
+        return elements.size();
+    }
+
+/*    private String waitElementAndGetAttribute(By by, String attribute, String error_message, long timeoutInSeconds) {
+        MobileElement mobileElement = (MobileElement) waitForElementPresent(by, error_message, timeoutInSeconds);
+        AndroidElement androidElement = (AndroidElement) waitForElementPresent(by, error_message, timeoutInSeconds);
+        return androidElement.getAttribute(attribute);
+        Убрал метод, так как выдает ошибку org.openqa.selenium.UnsupportedCommandException: Method is not implemented
+    }*/
+
     @Before
     public void setUp() throws Exception {
         DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -112,8 +129,6 @@ public class FirstTest {
 
     @Test
     public void firstTests() {
-
-
         waitForElementAndClick(
                 By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
                 "Cannot find 'Search Wikipedia'",
@@ -121,9 +136,9 @@ public class FirstTest {
         );
 
         waitForElementAndSendKeys(
-                By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
+                By.xpath("//*[contains(@text, 'Search…')]"),
                 "Java",
-                "Cannot find 'Search Wikipedia'",
+                "Cannot find 'Search…'",
                 5
         );
 
@@ -144,9 +159,9 @@ public class FirstTest {
         );
 
         waitForElementAndSendKeys(
-                By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
+                By.xpath("//*[contains(@text, 'Search…')]"),
                 "Java",
-                "Cannot find 'Search Wikipedia'",
+                "Cannot find 'Search…'",
                 5
         );
 
@@ -157,17 +172,14 @@ public class FirstTest {
         );
 
         waitForElementAndClick(
-                By.xpath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout" +
-                        "/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout" +
-                        "/android.widget.LinearLayout/android.widget.FrameLayout[1]/android.view.ViewGroup" +
-                        "/android.widget.ImageButton"),
+                By.xpath("//*[contains(@content-desc, 'Clear query')]"),
                 "Cannot find Back button",
                 10
         );
 
         waitForElementNotPresent(
-                By.xpath("//*[contains(@text, 'GOT IT')]"),
-                "Cannot find 'GOT IT'",
+                By.xpath("//*[contains(@content-desc, 'Clear query')]"),
+                "Cannot find X",
                 10
         );
     }
@@ -180,9 +192,9 @@ public class FirstTest {
                 5
         );
         waitForElementAndSendKeys(
-                By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
+                By.xpath("//*[contains(@text, 'Search…')]"),
                 "Java",
-                "Cannot find 'Search Wikipedia'",
+                "Cannot find 'Search…'",
                 5
         );
         waitForElementAndClick(
@@ -199,8 +211,8 @@ public class FirstTest {
     public void testSwipeArticleToFindElement() {
 
         swipeUpToFindElement(
-                By.xpath("//*[contains(@text, 'MORE LIKE THIS')]"),
-                "Cannot find 'MORE LIKE THISsss'",
+                By.xpath("//*[contains(@text, 'Today on Wikipedia')]"),
+                "Cannot find 'Today on Wikipedia'",
                 5
         );
     }
@@ -272,14 +284,109 @@ public class FirstTest {
                 "Cannot find 'My lists' button",
                 5
         );
-/*        swipeElementToLeft(
+        swipeElementToLeft(
                 By.xpath("//*[@text='Java (programming language)']"),
                 "Cannot swipe element to the left"
-        );*/
+        );
         waitForElementNotPresent(
                 By.xpath("//*[@text='object-oriented programming language']"),
                 "Cannot delete saved article",
                 5
+        );
+    }
+
+    @Test
+    public void testAmountOfNotEmptySearch() {
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
+                "Cannot find 'Search Wikipedia'",
+                5
+        );
+
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text, 'Search…')]"),
+                "Linkin park discography",
+                "Cannot find 'Linkin park discography'",
+                5
+        );
+        int amount_of_search_results = getAmountOfElements(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']")
+        );
+        Assert.assertTrue(
+                "We found too few results!",
+                amount_of_search_results > 0
+        );
+    }
+
+    /*@Test
+    public void testChangeScreenOrientationOnSearchResults() {
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
+                "Cannot find 'Search Wikipedia'",
+                5
+        );
+
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text, 'Search…')]"),
+                "Java",
+                "Cannot find 'Search…'",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//*[@text='Object-oriented programming language']"),
+                "Cannot find 'Object-oriented programming language' topic searching by 'Java'",
+                5
+        );
+
+        String title_before_rotation = waitElementAndGetAttribute(
+                By.xpath("//*[@resource-id='org.wikipedia:id/view_page_title_text']"),
+                "text",
+                "Cannot find title of article",
+                10
+        );
+
+        driver.rotate(ScreenOrientation.LANDSCAPE);
+
+        String title_after_rotation = waitElementAndGetAttribute(
+                By.xpath("//*[@resource-id='org.wikipedia:id/view_page_title_text']"),
+                "text",
+                "Cannot find title of article",
+                10
+        );
+
+        Assert.assertEquals(
+                "Article title have been changed after screen rotation",
+                title_before_rotation,
+                title_after_rotation
+        );
+    }
+    Убрал тест, так как выдаёт ошибку org.openqa.selenium.UnsupportedCommandException: Method is not implemented
+    */
+
+    @Test
+    public void testCheckSearchArticleInBackground() {
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
+                "Cannot find 'Search Wikipedia'",
+                5
+        );
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text, 'Search…')]"),
+                "Java",
+                "Cannot find 'Search…'",
+                5
+        );
+        waitForElementPresent(
+                By.xpath("//*[@text='Object-oriented programming language']"),
+                "Cannot find 'Object-oriented programming language'",
+                10
+        );
+        driver.runAppInBackground(3);
+        waitForElementPresent(
+                By.xpath("//*[@text='Object-oriented programming language']"),
+                "Cannot find article after returning from background",
+                10
         );
     }
 }
