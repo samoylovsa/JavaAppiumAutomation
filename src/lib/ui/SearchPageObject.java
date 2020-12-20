@@ -13,7 +13,8 @@ public class SearchPageObject extends MainPageObject{
     SEARCH_INIT_ELEMENT = "//*[contains(@text, 'Search Wikipedia')]",
     SEARCH_INPUT = "//*[contains(@text, 'Search…')]",
     SEARCH_RESULT_BY_SUBSTRING_TPL = "//*[@text='{SUBSTRING}']",
-    SEARCH_CANCEL_BUTTON = "//*[contains(@content-desc, 'Clear query')]";
+    SEARCH_CANCEL_BUTTON = "//*[contains(@content-desc, 'Clear query')]",
+    SEARCH_RESULT_ELEMENT = "//*[@resource-id='org.wikipedia:id/page_list_item_container']";
 
     /* TEMPLATES METHODS */
     private static String getResultSearchElement(String substring) {
@@ -64,5 +65,9 @@ public class SearchPageObject extends MainPageObject{
                 By.xpath(search_result_xpath),
                 "Cannot find and click search result with substring " + substring,
         10);
+    }
+
+    public int getAmountOfFoundArticles() {
+        return this.getAmountOfElements(By.xpath(SEARCH_RESULT_ELEMENT));
     }
 }
