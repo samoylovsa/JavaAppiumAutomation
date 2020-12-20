@@ -1,4 +1,5 @@
 import lib.CoreTestCase;
+import lib.ui.ArticlePageObject;
 import lib.ui.MainPageObject;
 import lib.ui.SearchPageObject;
 import org.junit.Assert;
@@ -20,135 +21,69 @@ public class FirstTest extends CoreTestCase {
         SearchPageObject searchPageObject = new SearchPageObject(driver);
 
         searchPageObject.initSearchInput();
-        searchPageObject.typeSearchLine("java");
+        searchPageObject.typeSearchLine("Java");
         searchPageObject.waitForSearchResult("Object-oriented programming language");
     }
 
     @Test
     public void testCancelSearch() {
+        SearchPageObject searchPageObject = new SearchPageObject(driver);
 
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
-                "Cannot find 'Search Wikipedia'",
-                5
-        );
-
-        MainPageObject.waitForElementAndSendKeys(
-                By.xpath("//*[contains(@text, 'Search…')]"),
-                "Java",
-                "Cannot find 'Search…'",
-                5
-        );
-
-        MainPageObject.waitForElementAndClear(
-                By.xpath("//*[contains(@text, 'Java')]"),
-                "Cannot find 'Java'",
-                5
-        );
-
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//*[contains(@content-desc, 'Clear query')]"),
-                "Cannot find Back button",
-                10
-        );
-
-        MainPageObject.waitForElementNotPresent(
-                By.xpath("//*[contains(@content-desc, 'Clear query')]"),
-                "Cannot find X",
-                10
-        );
+        searchPageObject.initSearchInput();
+        searchPageObject.typeSearchLine("Java");
+        searchPageObject.waitForCancelButtonToAppear();
+        searchPageObject.clickCancelSearch();
     }
 
-    @Test
-    public void testSwipeArticle() {
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
-                "Cannot find 'Search Wikipedia'",
-                5
+    /*@Test
+    public void testCompareArticleTitle() {
+        SearchPageObject searchPageObject = new SearchPageObject(driver);
+
+        searchPageObject.initSearchInput();
+        searchPageObject.typeSearchLine("Java");
+        searchPageObject.clickByArticleWithSubstring("Java (programming language)");
+
+        ArticlePageObject articlePageObject = new ArticlePageObject(driver);
+
+        articlePageObject.waitForTitleElement();
+        String article_title = articlePageObject.getArticleTitle();
+
+        Assert.assertEquals(
+                "We see unexpected title!",
+                "Java (programming language)",
+                article_title
         );
-        MainPageObject.waitForElementAndSendKeys(
-                By.xpath("//*[contains(@text, 'Search…')]"),
-                "Java",
-                "Cannot find 'Search…'",
-                5
-        );
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//*[contains(@text, 'Java (programming language)')]"),
-                "Cannot find 'Java (programming language)'",
-                10
-        );
-        MainPageObject.swipeUp(2000);
-        MainPageObject.swipeUp(2000);
-        MainPageObject.swipeUp(2000);
-    }
+        Тест падает в ошибку org.openqa.selenium.UnsupportedCommandException: Method is not implemented
+        Гугл говорит, что проблема в версии java клиента (библиотеки)
+    }*/
 
     @Test
     public void testSwipeArticleToFindElement() {
+        SearchPageObject searchPageObject = new SearchPageObject(driver);
 
-        MainPageObject.swipeUpToFindElement(
-                By.xpath("//*[contains(@text, 'Today on Wikipedia')]"),
-                "Cannot find 'Today on Wikipedia'",
-                5
-        );
+        searchPageObject.initSearchInput();
+        searchPageObject.typeSearchLine("Appium");
+        searchPageObject.clickByArticleWithSubstring("AppImage is a format distributing software on Linux");
+
+        ArticlePageObject articlePageObject = new ArticlePageObject(driver);
+        articlePageObject.waitForTitleElement();
+        articlePageObject.swipeToFooter();
+
     }
 
     @Test
     public void testSaveArticleToMyList() {
 
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
-                "Cannot find 'Search Wikipedia'",
-                5
-        );
+        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        searchPageObject.initSearchInput();
+        searchPageObject.typeSearchLine("Java");
+        searchPageObject.waitForSearchResult("Object-oriented programming language");
 
-        MainPageObject.waitForElementAndSendKeys(
-                By.xpath("//*[contains(@text, 'Search…')]"),
-                "Java",
-                "Cannot find 'Search…'",
-                5
-        );
+        ArticlePageObject articlePageObject = new ArticlePageObject(driver);
+        String name_of_folder = "Learning programming";
+        articlePageObject.addArticleToMyList(name_of_folder);
+        articlePageObject.closeArticle();
 
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//*[@text='Object-oriented programming language']"),
-                "Cannot find 'Object-oriented programming language' topic searching by 'Java'",
-                5
-        );
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.ImageView[@content-desc='More options']"),
-                "Cannot find 'More options' button",
-                5
-        );
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//*[@text='Add to reading list']"),
-                "Cannot find 'Add to reading list' button",
-                5
-        );
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//*[@text='GOT IT']"),
-                "Cannot find 'GOT IT' button",
-                5
-        );
-        MainPageObject.waitForElementAndClear(
-                By.xpath("//*[@text='My reading list']"),
-                "Cannot clear text 'My reading list'",
-                5
-        );
-        MainPageObject.waitForElementAndSendKeys(
-                By.xpath("//*[@resource-id='org.wikipedia:id/text_input']"),
-                "Learning programming",
-                "Cannot put text into article folder",
-                5
-        );
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//*[@text='OK']"),
-                "Cannot find 'OK' button",
-                5
-        );
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//*[@content-desc='Navigate up']"),
-                "Cannot find X button",
-                5
-        );
         MainPageObject.waitForElementAndClick(
                 By.xpath("//*[@content-desc='My lists']"),
                 "Cannot find 'My lists' button",

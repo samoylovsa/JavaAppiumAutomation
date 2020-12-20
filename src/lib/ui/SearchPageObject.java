@@ -12,7 +12,8 @@ public class SearchPageObject extends MainPageObject{
     private static final String
     SEARCH_INIT_ELEMENT = "//*[contains(@text, 'Search Wikipedia')]",
     SEARCH_INPUT = "//*[contains(@text, 'Search…')]",
-    SEARCH_RESULT_BY_SUBSTRING_TPL = "//*[@text='{SUBSTRING}']";
+    SEARCH_RESULT_BY_SUBSTRING_TPL = "//*[@text='{SUBSTRING}']",
+    SEARCH_CANCEL_BUTTON = "//*[contains(@content-desc, 'Clear query')]";
 
     /* TEMPLATES METHODS */
     private static String getResultSearchElement(String substring) {
@@ -43,5 +44,25 @@ public class SearchPageObject extends MainPageObject{
         this.waitForElementPresent(
                 By.xpath(search_result_xpath),
                 "Cannot find search result with substring " + substring);
+    }
+
+    public void waitForCancelButtonToAppear() {
+        this.waitForElementPresent(By.xpath(SEARCH_CANCEL_BUTTON),
+                "Cannot find search cancel button!",
+                5);
+    }
+
+    public void clickCancelSearch() {
+        this.waitForElementAndClick(By.xpath(SEARCH_CANCEL_BUTTON),
+                "Cannot find and click search cancel button!",
+                5);
+    }
+
+    public void clickByArticleWithSubstring(String substring) {
+        String search_result_xpath = getResultSearchElement(substring);
+        this.waitForElementAndClick(
+                By.xpath(search_result_xpath),
+                "Cannot find and click search result with substring " + substring,
+        10);
     }
 }
